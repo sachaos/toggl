@@ -12,7 +12,7 @@ import (
 
 func CmdCurrent(c *cli.Context) error {
 
-	current, err := toggl.FetchCurrent(viper.GetString("token"))
+	current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
 	current_time_entry := current.Data
 	if err != nil {
 		return err
