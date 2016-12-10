@@ -18,6 +18,11 @@ func CmdCurrent(c *cli.Context) error {
 		return err
 	}
 
+	if current_time_entry.ID == 0 {
+		fmt.Println("No time entry")
+		return nil
+	}
+
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 

@@ -3,6 +3,7 @@ package toggl
 import (
 	"encoding/base64"
 	"encoding/json"
+	"strconv"
 
 	"github.com/franela/goreq"
 )
@@ -58,6 +59,20 @@ func PostStartTimeEntry(timeEntry TimeEntry, token string) error {
 		Uri:         "https://www.toggl.com/api/v8/time_entries/start",
 		ContentType: "application/json",
 		Body:        string(body_text),
+	}.WithHeader("Authorization", "Basic "+basic).Do()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func PutStopTimeEntry(id int, token string) error {
+	basic := base64.StdEncoding.EncodeToString([]byte(token + ":api_token"))
+	id_string := strconv.Itoa(id)
+	_, err := goreq.Request{
+		Method:      "PUT",
+		Uri:         "https://www.toggl.com/api/v8/time_entries/" + id_string + "/stop",
+		ContentType: "application/json",
 	}.WithHeader("Authorization", "Basic "+basic).Do()
 	if err != nil {
 		return err
