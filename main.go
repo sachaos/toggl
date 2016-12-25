@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
+	"github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
@@ -23,26 +24,7 @@ const (
 
 func main() {
 
-	viper.SetConfigType(configType)
-	viper.SetConfigName(configName) // name of config file (without extension)
-	viper.AddConfigPath(configPath) // call multiple times to add many search paths
-	viper.AddConfigPath(".")        // optionally look for config in the working directory
-	err := viper.ReadInConfig()     // Find and read the config file
-
-	if err != nil {
-		var token string
-		fmt.Printf("Input API Token: ")
-		fmt.Scan(&token)
-		viper.Set("token", token)
-		buf, err := json.MarshalIndent(viper.AllSettings(), "", "  ")
-		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
-		}
-		err = ioutil.WriteFile(filepath.Join(configPath, configName+"."+configType), buf, os.ModePerm)
-		if err != nil {
-			panic(fmt.Errorf("Fatal error config file: %s \n", err))
-		}
-	}
+	initialize()
 
 	app := cli.NewApp()
 	app.Name = Name
@@ -56,4 +38,44 @@ func main() {
 	app.CommandNotFound = CommandNotFound
 
 	app.Run(os.Args)
+}
+
+func requireToken() error {
+	var token string
+	var workspaces []toggl.Workspace
+	var err error
+	count := 0
+	for count < 3 {
+		fmt.Printf("Input API Token: ")
+		fmt.Scan(&token)
+		workspaces, err = toggl.FetchWorkspaces(token)
+		if err == nil {
+			viper.Set("token", token)
+			viper.Set("wid", workspaces[0].ID)
+			return nil
+		}
+		count++
+	}
+	panic(fmt.Errorf("Invalid token"))
+}
+
+func createConfig() {
+	buf, _ := json.MarshalIndent(viper.AllSettings(), "", "  ")
+	err := ioutil.WriteFile(filepath.Join(configPath, configName+"."+configType), buf, os.ModePerm)
+	if err != nil {
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+	}
+}
+
+func initialize() {
+	viper.SetConfigType(configType)
+	viper.SetConfigName(configName)
+	viper.AddConfigPath(configPath)
+	viper.AddConfigPath(".")
+	_ = viper.ReadInConfig()
+
+	if !viper.IsSet("token") {
+		requireToken()
+		createConfig()
+	}
 }
