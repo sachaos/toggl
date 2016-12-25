@@ -1,11 +1,7 @@
 package toggl
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"strconv"
-
-	"github.com/franela/goreq"
 )
 
 type TimeEntry struct {
@@ -35,12 +31,9 @@ func (timeEntry TimeEntry) AddParam() interface{} {
 
 func GetCurrentTimeEntry(token string) (CurrentResponse, error) {
 	var response CurrentResponse
-	basic := base64.StdEncoding.EncodeToString([]byte(token + ":api_token"))
-	res, err := goreq.Request{
-		Method:      "GET",
-		Uri:         "https://www.toggl.com/api/v8/time_entries/current",
-		ContentType: "application/json",
-	}.WithHeader("Authorization", "Basic "+basic).Do()
+
+	res, err := Request("GET", "time_entries/current", nil, token)
+
 	if err != nil {
 		return CurrentResponse{}, err
 	}
@@ -49,17 +42,8 @@ func GetCurrentTimeEntry(token string) (CurrentResponse, error) {
 }
 
 func PostStartTimeEntry(timeEntry TimeEntry, token string) error {
-	basic := base64.StdEncoding.EncodeToString([]byte(token + ":api_token"))
-	body_text, err := json.Marshal(timeEntry.AddParam())
-	if err != nil {
-		return err
-	}
-	_, err = goreq.Request{
-		Method:      "POST",
-		Uri:         "https://www.toggl.com/api/v8/time_entries/start",
-		ContentType: "application/json",
-		Body:        string(body_text),
-	}.WithHeader("Authorization", "Basic "+basic).Do()
+	_, err := Request("POST", "time_entries/start", timeEntry.AddParam(), token)
+
 	if err != nil {
 		return err
 	}
@@ -67,13 +51,10 @@ func PostStartTimeEntry(timeEntry TimeEntry, token string) error {
 }
 
 func PutStopTimeEntry(id int, token string) error {
-	basic := base64.StdEncoding.EncodeToString([]byte(token + ":api_token"))
 	id_string := strconv.Itoa(id)
-	_, err := goreq.Request{
-		Method:      "PUT",
-		Uri:         "https://www.toggl.com/api/v8/time_entries/" + id_string + "/stop",
-		ContentType: "application/json",
-	}.WithHeader("Authorization", "Basic "+basic).Do()
+
+	_, err := Request("PUT", "time_entries/"+id_string+"/stop", nil, token)
+
 	if err != nil {
 		return err
 	}

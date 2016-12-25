@@ -1,11 +1,5 @@
 package toggl
 
-import (
-	"encoding/base64"
-
-	"github.com/franela/goreq"
-)
-
 type Workspace struct {
 	Admin                       bool   `json:"admin"`
 	APIToken                    string `json:"api_token"`
@@ -39,15 +33,13 @@ type Workspace struct {
 
 func FetchWorkspaces(token string) ([]Workspace, error) {
 	var workspaces []Workspace
-	basic := base64.StdEncoding.EncodeToString([]byte(token + ":api_token"))
-	res, err := goreq.Request{
-		Method:      "GET",
-		Uri:         "https://www.toggl.com/api/v8/workspaces",
-		ContentType: "application/json",
-	}.WithHeader("Authorization", "Basic "+basic).Do()
+	res, err := Request("GET", "/workspaces", nil, token)
 	if err != nil {
 		return []Workspace{}, err
 	}
-	res.Body.FromJsonTo(&workspaces)
+	err = res.Body.FromJsonTo(&workspaces)
+	if err != nil {
+		return []Workspace{}, err
+	}
 	return workspaces, nil
 }
