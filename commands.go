@@ -29,6 +29,11 @@ var Commands = []cli.Command{
 		Action: command.CmdCurrent,
 		Flags:  []cli.Flag{},
 	},
+	{
+		Name:   "workspaces",
+		Usage:  "",
+		Action: command.CmdWorkspaces,
+	},
 }
 
 func CommandNotFound(c *cli.Context, command string) {
