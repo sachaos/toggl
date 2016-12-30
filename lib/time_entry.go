@@ -14,7 +14,7 @@ type TimeEntry struct {
 	Start       string   `json:"start"`
 	Tags        []string `json:"tags"`
 	UID         int      `json:"uid"`
-	Wid         int      `json:"wid"`
+	WID         int      `json:"wid"`
 }
 
 type CurrentResponse struct {
@@ -24,6 +24,7 @@ type CurrentResponse struct {
 func (timeEntry TimeEntry) AddParam() interface{} {
 	param := make(map[string]map[string]interface{})
 	param["time_entry"] = make(map[string]interface{})
+	param["time_entry"]["wid"] = timeEntry.WID
 	param["time_entry"]["description"] = timeEntry.Description
 	param["time_entry"]["created_with"] = "sachaos/toggl"
 	return param
