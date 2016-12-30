@@ -30,6 +30,11 @@ func CmdCurrent(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	workspaces, err := toggl.FetchWorkspaces(viper.GetString("token"))
+	if err != nil {
+		return err
+	}
+	workspace, err := workspaces.FindByID(current_time_entry.WID)
 
 	if current_time_entry.ID == 0 {
 		fmt.Println("No time entry")
@@ -41,6 +46,7 @@ func CmdCurrent(c *cli.Context) error {
 
 	fmt.Fprintf(w, "ID\t%d\n", current_time_entry.ID)
 	fmt.Fprintf(w, "Description\t%s\n", current_time_entry.Description)
+	fmt.Fprintf(w, "Workspace\t%s\n", workspace.Name)
 	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(current_time_entry.Duration)))
 	w.Flush()
 

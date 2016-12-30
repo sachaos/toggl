@@ -1,5 +1,9 @@
 package toggl
 
+import (
+	"errors"
+)
+
 type Workspace struct {
 	Admin                       bool   `json:"admin"`
 	APIToken                    string `json:"api_token"`
@@ -31,15 +35,26 @@ type Workspace struct {
 	} `json:"subscription"`
 }
 
-func FetchWorkspaces(token string) ([]Workspace, error) {
-	var workspaces []Workspace
+type Workspaces []Workspace
+
+func (repository Workspaces) FindByID(id int) (*Workspace, error) {
+	for _, item := range repository {
+		if item.ID == id {
+			return &item, nil
+		}
+	}
+	return nil, errors.New("Find Failed")
+}
+
+func FetchWorkspaces(token string) (Workspaces, error) {
+	var workspaces Workspaces
 	res, err := Request("GET", "/workspaces", nil, token)
 	if err != nil {
-		return []Workspace{}, err
+		return Workspaces{}, err
 	}
 	err = res.Body.FromJsonTo(&workspaces)
 	if err != nil {
-		return []Workspace{}, err
+		return Workspaces{}, err
 	}
 	return workspaces, nil
 }
