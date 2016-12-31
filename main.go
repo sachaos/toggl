@@ -4,26 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"encoding/json"
-	"io/ioutil"
-	"path/filepath"
-
 	"github.com/sachaos/toggl/lib"
+	"github.com/sachaos/toggl/utils"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-var (
-	configPath = os.Getenv("HOME")
-)
-
-const (
-	configName = ".toggl"
-	configType = "json"
-)
-
 func main() {
-
 	initialize()
 
 	app := cli.NewApp()
@@ -59,23 +46,27 @@ func requireToken() error {
 	panic(fmt.Errorf("Invalid token"))
 }
 
-func createConfig() {
-	buf, _ := json.MarshalIndent(viper.AllSettings(), "", "  ")
-	err := ioutil.WriteFile(filepath.Join(configPath, configName+"."+configType), buf, os.ModePerm)
+func LoadLocalConfig() error {
+	localFilePath := utils.LocalConfigFilePath()
+	file, err := os.Open(localFilePath)
 	if err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+		return err
 	}
+	viper.MergeConfig(file)
+	return nil
 }
 
 func initialize() {
-	viper.SetConfigType(configType)
-	viper.SetConfigName(configName)
-	viper.AddConfigPath(configPath)
+	viper.SetConfigType(utils.ConfigType)
+	viper.SetConfigName(utils.ConfigName)
+	viper.AddConfigPath(utils.ConfigPath)
 	viper.AddConfigPath(".")
-	_ = viper.ReadInConfig()
+	viper.ReadInConfig()
+
+	LoadLocalConfig()
 
 	if !viper.IsSet("token") {
 		requireToken()
-		createConfig()
+		utils.CreateConfig(utils.RootConfigFilePath(), viper.AllSettings())
 	}
 }
