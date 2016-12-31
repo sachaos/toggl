@@ -13,40 +13,40 @@ var GlobalFlags = []cli.Flag{}
 var Commands = []cli.Command{
 	{
 		Name:   "start",
-		Usage:  "",
+		Usage:  "Start time entry",
 		Action: command.CmdStart,
 		Flags:  []cli.Flag{},
 	},
 	{
 		Name:   "stop",
-		Usage:  "",
+		Usage:  "End time entry",
 		Action: command.CmdStop,
 		Flags:  []cli.Flag{},
 	},
 	{
 		Name:   "current",
-		Usage:  "",
+		Usage:  "Show current time entry",
 		Action: command.CmdCurrent,
 		Flags:  []cli.Flag{},
 	},
 	{
 		Name:   "workspaces",
-		Usage:  "",
+		Usage:  "Show workspaces",
 		Action: command.CmdWorkspaces,
 	},
 	{
 		Name:   "projects",
-		Usage:  "",
+		Usage:  "Show projects on current workspaces",
 		Action: command.CmdProjects,
 	},
 	{
 		Name:   "local",
-		Usage:  "",
+		Usage:  "Set current dir workspace",
 		Action: command.CmdLocal,
 	},
 	{
 		Name:   "global",
-		Usage:  "",
+		Usage:  "Set global workspace",
 		Action: command.CmdGlobal,
 	},
 }
