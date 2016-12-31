@@ -44,6 +44,11 @@ var Commands = []cli.Command{
 		Usage:  "",
 		Action: command.CmdLocal,
 	},
+	{
+		Name:   "global",
+		Usage:  "",
+		Action: command.CmdGlobal,
+	},
 }
 
 func CommandNotFound(c *cli.Context, command string) {
