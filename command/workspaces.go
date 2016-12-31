@@ -20,7 +20,14 @@ func CmdWorkspaces(c *cli.Context) error {
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
 	for _, workspace := range workspaces {
-		fmt.Fprintf(w, "%d\t%s\n",
+		var flg string
+		if workspace.ID == viper.GetInt("wid") {
+			flg = "*"
+		} else {
+			flg = ""
+		}
+		fmt.Fprintf(w, "%s\t%d\t%s\n",
+			flg,
 			workspace.ID,
 			workspace.Name,
 		)
