@@ -10,12 +10,19 @@ import (
 
 var GlobalFlags = []cli.Flag{}
 
+var projectIDFlag = cli.IntFlag{
+	Name:  "project-id, P",
+	Usage: "Project id",
+}
+
 var Commands = []cli.Command{
 	{
 		Name:   "start",
 		Usage:  "Start time entry",
 		Action: command.CmdStart,
-		Flags:  []cli.Flag{},
+		Flags: []cli.Flag{
+			projectIDFlag,
+		},
 	},
 	{
 		Name:   "stop",

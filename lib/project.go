@@ -1,6 +1,7 @@
 package toggl
 
 import (
+	"errors"
 	"strconv"
 )
 
@@ -20,15 +21,26 @@ type Project struct {
 	Wid           int    `json:"wid"`
 }
 
-func FetchWorkspaceProjects(token string, wid int) ([]Project, error) {
-	var workspaces []Project
+type Projects []Project
+
+func (repository Projects) FindByID(id int) (Project, error) {
+	for _, item := range repository {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+	return Project{}, errors.New("Find Failed")
+}
+
+func FetchWorkspaceProjects(token string, wid int) (Projects, error) {
+	var workspaces Projects
 	res, err := Request("GET", "/workspaces/"+strconv.Itoa(wid)+"/projects", nil, token)
 	if err != nil {
-		return []Project{}, err
+		return Projects{}, err
 	}
 	err = res.Body.FromJsonTo(&workspaces)
 	if err != nil {
-		return []Project{}, err
+		return Projects{}, err
 	}
 	return workspaces, nil
 }

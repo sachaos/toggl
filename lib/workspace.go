@@ -37,13 +37,13 @@ type Workspace struct {
 
 type Workspaces []Workspace
 
-func (repository Workspaces) FindByID(id int) (*Workspace, error) {
+func (repository Workspaces) FindByID(id int) (Workspace, error) {
 	for _, item := range repository {
 		if item.ID == id {
-			return &item, nil
+			return item, nil
 		}
 	}
-	return nil, errors.New("Find Failed")
+	return Workspace{}, errors.New("Find Failed")
 }
 
 func FetchWorkspaces(token string) (Workspaces, error) {

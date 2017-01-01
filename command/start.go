@@ -16,6 +16,9 @@ func CmdStart(c *cli.Context) error {
 
 	timeEntry.Description = c.Args().First()
 	timeEntry.WID = viper.GetInt("wid")
+	if c.IsSet("project-id") {
+		timeEntry.PID = c.Int("project-id")
+	}
 	err := toggl.PostStartTimeEntry(timeEntry, viper.GetString("token"))
 	if err != nil {
 		return err
