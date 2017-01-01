@@ -1,14 +1,14 @@
-package command
+package main
 
 import (
 	"errors"
 	"strconv"
 
-	"github.com/sachaos/toggl/utils"
+	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-func CmdLocal(c *cli.Context) error {
+func CmdGlobal(c *cli.Context) error {
 	if !c.Args().Present() {
 		return errors.New("Command Failed")
 	}
@@ -16,8 +16,9 @@ func CmdLocal(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
+	viper.Set("wid", wid)
 
-	utils.CreateConfig(utils.LocalConfigFilePath(), map[string]int{"wid": wid})
+	CreateConfig(RootConfigFilePath(), viper.AllSettings())
 
 	return nil
 }

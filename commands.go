@@ -42,12 +42,12 @@ var Commands = []cli.Command{
 	{
 		Name:   "local",
 		Usage:  "Set current dir workspace",
-		Action: command.CmdLocal,
+		Action: CmdLocal,
 	},
 	{
 		Name:   "global",
 		Usage:  "Set global workspace",
-		Action: command.CmdGlobal,
+		Action: CmdGlobal,
 	},
 }
 
