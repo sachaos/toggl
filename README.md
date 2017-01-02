@@ -1,10 +1,44 @@
-# toggl
+# toggl CLI client
 
-
+[toggl](https://toggl.com/) CLI Client, written in Golang.
 
 ## Description
 
+[toggl](https://toggl.com/) is a time tracking web application.
+This program will let you use the toggl in CLI.
+
 ## Usage
+
+![demo image](https://cloud.githubusercontent.com/assets/6121271/21588531/0108bd18-d12b-11e6-9fdc-e65aa1f15768.gif)
+
+```
+$ toggl --help
+NAME:
+   toggl - Toggl API CLI Client
+
+USAGE:
+   toggl [global options] command [command options] [arguments...]
+
+VERSION:
+   0.1.0
+
+AUTHOR(S):
+   sachaos <sakataku7@gmail.com>
+
+COMMANDS:
+     start       Start time entry
+     stop        End time entry
+     current     Show current time entry
+     workspaces  Show workspaces
+     projects    Show projects on current workspaces
+     local       Set current dir workspace
+     global      Set global workspace
+     help, h     Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help
+   --version, -v  print the version
+```
 
 ## Install
 
@@ -14,15 +48,10 @@ To install, use `go get`:
 $ go get -d github.com/sachaos/toggl
 ```
 
-## Contribution
+### Register API token
 
-1. Fork ([https://github.com/sachaos/toggl/fork](https://github.com/sachaos/toggl/fork))
-1. Create a feature branch
-1. Commit your changes
-1. Rebase your local changes against the master branch
-1. Run test suite with the `go test ./...` command and confirm that it passes
-1. Run `gofmt -s`
-1. Create a new Pull Request
+When you run `toggl` first time, you will be asked your toggl API token.
+Please input toggl API token and register it.
 
 ## Author
 
