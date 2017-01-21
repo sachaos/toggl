@@ -6,6 +6,7 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -25,42 +26,51 @@ func calcDuration(duration int64) time.Duration {
 
 func CmdCurrent(c *cli.Context) error {
 	var project toggl.Project
+	var currentTimeEntry toggl.TimeEntry
+	var workspace toggl.Workspace
 
-	current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
-	current_time_entry := current.Data
-	if err != nil {
-		return err
-	}
-	workspaces, err := toggl.FetchWorkspaces(viper.GetString("token"))
-	if err != nil {
-		return err
-	}
-	workspace, err := workspaces.FindByID(current_time_entry.WID)
-
-	if current_time_entry.ID == 0 {
-		fmt.Println("No time entry")
-		return nil
-	}
-
-	if current_time_entry.PID != 0 {
-		projects, err := toggl.FetchWorkspaceProjects(viper.GetString("token"), current_time_entry.WID)
+	if cachedCurrentTimeEntry := cache.GetContent().CurrentTimeEntry; cachedCurrentTimeEntry.ID != 0 {
+		currentTimeEntry = cachedCurrentTimeEntry
+	} else {
+		current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
+		currentTimeEntry = current.Data
 		if err != nil {
 			return err
 		}
-		project, err = projects.FindByID(current_time_entry.PID)
+		cache.SetCurrentTimeEntry(currentTimeEntry)
+		cache.Write()
+
+		workspaces, err := toggl.FetchWorkspaces(viper.GetString("token"))
 		if err != nil {
 			return err
+		}
+		workspace, err = workspaces.FindByID(currentTimeEntry.WID)
+
+		if currentTimeEntry.ID == 0 {
+			fmt.Println("No time entry")
+			return nil
+		}
+
+		if currentTimeEntry.PID != 0 {
+			projects, err := toggl.FetchWorkspaceProjects(viper.GetString("token"), currentTimeEntry.WID)
+			if err != nil {
+				return err
+			}
+			project, err = projects.FindByID(currentTimeEntry.PID)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
-	fmt.Fprintf(w, "ID\t%d\n", current_time_entry.ID)
-	fmt.Fprintf(w, "Description\t%s\n", current_time_entry.Description)
+	fmt.Fprintf(w, "ID\t%d\n", currentTimeEntry.ID)
+	fmt.Fprintf(w, "Description\t%s\n", currentTimeEntry.Description)
 	fmt.Fprintf(w, "Project\t%s\n", project.Name)
 	fmt.Fprintf(w, "Workspace\t%s\n", workspace.Name)
-	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(current_time_entry.Duration)))
+	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(currentTimeEntry.Duration)))
 	w.Flush()
 
 	return nil
