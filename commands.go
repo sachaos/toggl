@@ -15,6 +15,11 @@ var projectIDFlag = cli.IntFlag{
 	Usage: "Project id",
 }
 
+var cachedFlag = cli.BoolFlag{
+	Name:  "cache, C",
+	Usage: "Read from cache data",
+}
+
 var Commands = []cli.Command{
 	{
 		Name:   "start",
