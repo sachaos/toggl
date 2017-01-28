@@ -16,8 +16,9 @@ type Cache struct {
 }
 
 type CacheContent struct {
-	CurrentTimeEntry toggl.TimeEntry `json:"current_time_entry"`
-	Projects         toggl.Projects  `json:"projects"`
+	CurrentTimeEntry toggl.TimeEntry  `json:"current_time_entry"`
+	Projects         toggl.Projects   `json:"projects"`
+	Workspaces       toggl.Workspaces `json:"workspaces"`
 }
 
 func New(filename string) *Cache {
@@ -68,6 +69,11 @@ func (c *Cache) SetCurrentTimeEntry(timeEntry toggl.TimeEntry) {
 func SetProjects(projects toggl.Projects) { c.SetProjects(projects) }
 func (c *Cache) SetProjects(projects toggl.Projects) {
 	c.Content.Projects = projects
+}
+
+func SetWorkspaces(workspaces toggl.Workspaces) { c.SetWorkspaces(workspaces) }
+func (c *Cache) SetWorkspaces(workspaces toggl.Workspaces) {
+	c.Content.Workspaces = workspaces
 }
 
 func GetContent() CacheContent { return c.GetContent() }

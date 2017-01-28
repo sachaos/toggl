@@ -40,7 +40,7 @@ func CmdCurrent(c *cli.Context) error {
 		cache.SetCurrentTimeEntry(currentTimeEntry)
 		cache.Write()
 
-		workspaces, err := toggl.FetchWorkspaces(viper.GetString("token"))
+		workspaces, err := GetWorkspaces(c)
 		if err != nil {
 			return err
 		}

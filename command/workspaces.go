@@ -5,13 +5,24 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
+func GetWorkspaces(c *cli.Context) (workspaces toggl.Workspaces, err error) {
+	workspaces = cache.GetContent().Workspaces
+	if len(workspaces) == 0 {
+		workspaces, err = toggl.FetchWorkspaces(viper.GetString("token"))
+		cache.SetWorkspaces(workspaces)
+		cache.Write()
+	}
+	return
+}
+
 func CmdWorkspaces(c *cli.Context) error {
-	workspaces, err := toggl.FetchWorkspaces(viper.GetString("token"))
+	workspaces, err := GetWorkspaces(c)
 	if err != nil {
 		return err
 	}
