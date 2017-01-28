@@ -31,7 +31,7 @@ func CmdCurrent(c *cli.Context) error {
 
 	timeEntry = cache.GetContent().CurrentTimeEntry
 
-	if timeEntry.ID == 0 || !c.GlobalBool("cache") {
+	if !c.GlobalBool("cache") {
 		current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
 		timeEntry = current.Data
 		if err != nil {
@@ -46,11 +46,6 @@ func CmdCurrent(c *cli.Context) error {
 		}
 		workspace, err = workspaces.FindByID(timeEntry.WID)
 
-		if timeEntry.ID == 0 {
-			fmt.Println("No time entry")
-			return nil
-		}
-
 		if timeEntry.PID != 0 {
 			projects, err := GetProjects(c)
 			if err != nil {
@@ -61,6 +56,11 @@ func CmdCurrent(c *cli.Context) error {
 				return err
 			}
 		}
+	}
+
+	if timeEntry.ID == 0 {
+		fmt.Println("No time entry")
+		return nil
 	}
 
 	w := new(tabwriter.Writer)
