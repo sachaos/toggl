@@ -18,7 +18,7 @@ func GetProjects(c *cli.Context) (projects toggl.Projects, err error) {
 		cache.SetProjects(projects)
 		cache.Write()
 	}
-	return projects, err
+	return
 }
 
 func CmdProjects(c *cli.Context) error {
