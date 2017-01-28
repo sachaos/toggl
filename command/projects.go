@@ -13,7 +13,7 @@ import (
 
 func GetProjects(c *cli.Context) (projects toggl.Projects, err error) {
 	projects = cache.GetContent().Projects
-	if len(projects) == 0 {
+	if len(projects) == 0 || !c.GlobalBool("cache") {
 		projects, err = toggl.FetchWorkspaceProjects(viper.GetString("token"), viper.GetInt("wid"))
 		cache.SetProjects(projects)
 		cache.Write()

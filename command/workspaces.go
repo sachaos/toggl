@@ -13,7 +13,7 @@ import (
 
 func GetWorkspaces(c *cli.Context) (workspaces toggl.Workspaces, err error) {
 	workspaces = cache.GetContent().Workspaces
-	if len(workspaces) == 0 {
+	if len(workspaces) == 0 || !c.GlobalBool("cache") {
 		workspaces, err = toggl.FetchWorkspaces(viper.GetString("token"))
 		cache.SetWorkspaces(workspaces)
 		cache.Write()

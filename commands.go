@@ -8,7 +8,11 @@ import (
 	"github.com/urfave/cli"
 )
 
-var GlobalFlags = []cli.Flag{}
+var GlobalFlags = []cli.Flag{
+	cli.BoolFlag{
+		Name: "cache",
+	},
+}
 
 var projectIDFlag = cli.IntFlag{
 	Name:  "project-id, P",

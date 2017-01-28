@@ -29,7 +29,7 @@ func CmdCurrent(c *cli.Context) error {
 	var currentTimeEntry toggl.TimeEntry
 	var workspace toggl.Workspace
 
-	if cachedCurrentTimeEntry := cache.GetContent().CurrentTimeEntry; cachedCurrentTimeEntry.ID != 0 {
+	if cachedCurrentTimeEntry := cache.GetContent().CurrentTimeEntry; cachedCurrentTimeEntry.ID != 0 && c.GlobalBool("cache") {
 		currentTimeEntry = cachedCurrentTimeEntry
 	} else {
 		current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
