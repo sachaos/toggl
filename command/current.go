@@ -52,7 +52,7 @@ func CmdCurrent(c *cli.Context) error {
 		}
 
 		if currentTimeEntry.PID != 0 {
-			projects, err := toggl.FetchWorkspaceProjects(viper.GetString("token"), currentTimeEntry.WID)
+			projects, err := GetProjects(c)
 			if err != nil {
 				return err
 			}

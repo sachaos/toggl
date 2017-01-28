@@ -5,13 +5,24 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
+func GetProjects(c *cli.Context) (projects toggl.Projects, err error) {
+	projects = cache.GetContent().Projects
+	if len(projects) == 0 {
+		projects, err = toggl.FetchWorkspaceProjects(viper.GetString("token"), viper.GetInt("wid"))
+		cache.SetProjects(projects)
+		cache.Write()
+	}
+	return projects, err
+}
+
 func CmdProjects(c *cli.Context) error {
-	projects, err := toggl.FetchWorkspaceProjects(viper.GetString("token"), viper.GetInt("wid"))
+	projects, err := GetProjects(c)
 	if err != nil {
 		return err
 	}
