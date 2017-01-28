@@ -46,13 +46,17 @@ func GetCurrentTimeEntry(token string) (CurrentResponse, error) {
 	return response, nil
 }
 
-func PostStartTimeEntry(timeEntry TimeEntry, token string) error {
-	_, err := Request("POST", "time_entries/start", timeEntry.AddParam(), token)
+func PostStartTimeEntry(timeEntry TimeEntry, token string) (response CurrentResponse, err error) {
+	res, err := Request("POST", "time_entries/start", timeEntry.AddParam(), token)
+	if err != nil {
+		return CurrentResponse{}, err
+	}
+	res.Body.FromJsonTo(&response)
 
 	if err != nil {
-		return err
+		return
 	}
-	return nil
+	return response, nil
 }
 
 func PutStopTimeEntry(id int, token string) error {
