@@ -26,37 +26,37 @@ func calcDuration(duration int64) time.Duration {
 
 func CmdCurrent(c *cli.Context) error {
 	var project toggl.Project
-	var currentTimeEntry toggl.TimeEntry
+	var timeEntry toggl.TimeEntry
 	var workspace toggl.Workspace
 
-	if cachedCurrentTimeEntry := cache.GetContent().CurrentTimeEntry; cachedCurrentTimeEntry.ID != 0 && c.GlobalBool("cache") {
-		currentTimeEntry = cachedCurrentTimeEntry
-	} else {
+	timeEntry = cache.GetContent().CurrentTimeEntry
+
+	if timeEntry.ID == 0 || !c.GlobalBool("cache") {
 		current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
-		currentTimeEntry = current.Data
+		timeEntry = current.Data
 		if err != nil {
 			return err
 		}
-		cache.SetCurrentTimeEntry(currentTimeEntry)
+		cache.SetCurrentTimeEntry(timeEntry)
 		cache.Write()
 
 		workspaces, err := GetWorkspaces(c)
 		if err != nil {
 			return err
 		}
-		workspace, err = workspaces.FindByID(currentTimeEntry.WID)
+		workspace, err = workspaces.FindByID(timeEntry.WID)
 
-		if currentTimeEntry.ID == 0 {
+		if timeEntry.ID == 0 {
 			fmt.Println("No time entry")
 			return nil
 		}
 
-		if currentTimeEntry.PID != 0 {
+		if timeEntry.PID != 0 {
 			projects, err := GetProjects(c)
 			if err != nil {
 				return err
 			}
-			project, err = projects.FindByID(currentTimeEntry.PID)
+			project, err = projects.FindByID(timeEntry.PID)
 			if err != nil {
 				return err
 			}
@@ -66,11 +66,11 @@ func CmdCurrent(c *cli.Context) error {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
 
-	fmt.Fprintf(w, "ID\t%d\n", currentTimeEntry.ID)
-	fmt.Fprintf(w, "Description\t%s\n", currentTimeEntry.Description)
+	fmt.Fprintf(w, "ID\t%d\n", timeEntry.ID)
+	fmt.Fprintf(w, "Description\t%s\n", timeEntry.Description)
 	fmt.Fprintf(w, "Project\t%s\n", project.Name)
 	fmt.Fprintf(w, "Workspace\t%s\n", workspace.Name)
-	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(currentTimeEntry.Duration)))
+	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(timeEntry.Duration)))
 	w.Flush()
 
 	return nil
