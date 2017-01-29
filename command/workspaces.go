@@ -1,9 +1,7 @@
 package command
 
 import (
-	"fmt"
-	"os"
-	"text/tabwriter"
+	"strconv"
 
 	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
@@ -27,8 +25,9 @@ func CmdWorkspaces(c *cli.Context) error {
 		return err
 	}
 
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
+	writer := NewWriter(c)
+
+	defer writer.Flush()
 
 	for _, workspace := range workspaces {
 		var flg string
@@ -37,13 +36,8 @@ func CmdWorkspaces(c *cli.Context) error {
 		} else {
 			flg = ""
 		}
-		fmt.Fprintf(w, "%s\t%d\t%s\n",
-			flg,
-			workspace.ID,
-			workspace.Name,
-		)
+		writer.Write([]string{flg, strconv.Itoa(workspace.ID), workspace.Name})
 	}
-	w.Flush()
 
 	return nil
 }

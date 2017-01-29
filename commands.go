@@ -12,6 +12,9 @@ var GlobalFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name: "cache",
 	},
+	cli.BoolFlag{
+		Name: "csv",
+	},
 }
 
 var projectIDFlag = cli.IntFlag{

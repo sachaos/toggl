@@ -1,9 +1,7 @@
 package command
 
 import (
-	"fmt"
-	"os"
-	"text/tabwriter"
+	"strconv"
 
 	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
@@ -27,16 +25,13 @@ func CmdProjects(c *cli.Context) error {
 		return err
 	}
 
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
+	writer := NewWriter(c)
+
+	defer writer.Flush()
 
 	for _, project := range projects {
-		fmt.Fprintf(w, "%d\t%s\n",
-			project.ID,
-			project.Name,
-		)
+		writer.Write([]string{strconv.Itoa(project.ID), project.Name})
 	}
-	w.Flush()
 
 	return nil
 }

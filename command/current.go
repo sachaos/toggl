@@ -2,8 +2,7 @@ package command
 
 import (
 	"fmt"
-	"os"
-	"text/tabwriter"
+	"strconv"
 	"time"
 
 	"github.com/sachaos/toggl/cache"
@@ -63,15 +62,21 @@ func CmdCurrent(c *cli.Context) error {
 		return nil
 	}
 
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 0, 4, 1, ' ', 0)
+	writer := NewWriter(c)
 
-	fmt.Fprintf(w, "ID\t%d\n", timeEntry.ID)
-	fmt.Fprintf(w, "Description\t%s\n", timeEntry.Description)
-	fmt.Fprintf(w, "Project\t%s\n", project.Name)
-	fmt.Fprintf(w, "Workspace\t%s\n", workspace.Name)
-	fmt.Fprintf(w, "Duration\t%s\n", formatTimeDuration(calcDuration(timeEntry.Duration)))
-	w.Flush()
+	defer writer.Flush()
+
+	records := [][]string{
+		[]string{"ID", strconv.Itoa(timeEntry.ID)},
+		[]string{"Description", timeEntry.Description},
+		[]string{"Project", project.Name},
+		[]string{"Workspace", workspace.Name},
+		[]string{"Duration", formatTimeDuration(calcDuration(timeEntry.Duration))},
+	}
+
+	for _, record := range records {
+		writer.Write(record)
+	}
 
 	return nil
 }
