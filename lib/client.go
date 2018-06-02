@@ -1,20 +1,23 @@
 package toggl
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"path"
-
-	"bytes"
-
-	"io/ioutil"
 )
 
 const (
 	baseURI    = "https://www.toggl.com/api/v8"
 	retryCount = 3
+)
+
+var (
+	retryCountExceeded = errors.New("API request retry count exceeded")
 )
 
 type Client struct {
@@ -66,5 +69,5 @@ func (cl *Client) do(method string, endpoint string, param interface{}) (res *ht
 		count++
 	}
 
-	return
+	return nil, retryCountExceeded
 }

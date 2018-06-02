@@ -21,7 +21,6 @@ func (app *App) CmdStart(c *cli.Context) error {
 		timeEntry.PID = c.Int("project-id")
 	}
 	response, err := app.client.PostStartTimeEntry(timeEntry)
-
 	if err != nil {
 		return err
 	}
