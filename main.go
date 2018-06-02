@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -83,7 +84,10 @@ func main() {
 	}
 	app.CommandNotFound = CommandNotFound
 
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalf("Error: %s", err.Error())
+		os.Exit(1)
+	}
 }
 
 func requireToken() error {
