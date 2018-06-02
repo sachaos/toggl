@@ -1,6 +1,7 @@
 package toggl
 
 import (
+	"encoding/json"
 	"strconv"
 )
 
@@ -34,38 +35,40 @@ func (timeEntry TimeEntry) AddParam() interface{} {
 	return param
 }
 
-func GetCurrentTimeEntry(token string) (CurrentResponse, error) {
+func (cl *Client) GetCurrentTimeEntry() (CurrentResponse, error) {
 	var response CurrentResponse
 
-	res, err := Request("GET", "time_entries/current", nil, token)
-
+	res, err := cl.do("GET", "time_entries/current", nil)
 	if err != nil {
 		return CurrentResponse{}, err
 	}
-	res.Body.FromJsonTo(&response)
+
+	enc := json.NewDecoder(res.Body)
+	if err := enc.Decode(&response); err != nil {
+		return CurrentResponse{}, err
+	}
+
 	return response, nil
 }
 
-func PostStartTimeEntry(timeEntry TimeEntry, token string) (response CurrentResponse, err error) {
-	res, err := Request("POST", "time_entries/start", timeEntry.AddParam(), token)
+func (cl *Client) PostStartTimeEntry(timeEntry TimeEntry) (response CurrentResponse, err error) {
+	res, err := cl.do("POST", "time_entries/start", timeEntry.AddParam())
 	if err != nil {
 		return CurrentResponse{}, err
 	}
-	res.Body.FromJsonTo(&response)
 
-	if err != nil {
-		return
+	enc := json.NewDecoder(res.Body)
+	if err := enc.Decode(&response); err != nil {
+		return CurrentResponse{}, err
 	}
+
 	return response, nil
 }
 
-func PutStopTimeEntry(id int, token string) error {
+func (cl *Client) PutStopTimeEntry(id int) error {
 	id_string := strconv.Itoa(id)
 
-	_, err := Request("PUT", "time_entries/"+id_string+"/stop", nil, token)
+	_, err := cl.do("PUT", "time_entries/"+id_string+"/stop", nil)
 
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }

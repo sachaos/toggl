@@ -1,6 +1,7 @@
 package toggl
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -46,15 +47,17 @@ func (repository Workspaces) FindByID(id int) (Workspace, error) {
 	return Workspace{}, errors.New("Find Failed")
 }
 
-func FetchWorkspaces(token string) (Workspaces, error) {
+func (cl *Client) FetchWorkspaces() (Workspaces, error) {
 	var workspaces Workspaces
-	res, err := Request("GET", "/workspaces", nil, token)
+	res, err := cl.do("GET", "/workspaces", nil)
 	if err != nil {
 		return Workspaces{}, err
 	}
-	err = res.Body.FromJsonTo(&workspaces)
-	if err != nil {
+
+	enc := json.NewDecoder(res.Body)
+	if err := enc.Decode(&workspaces); err != nil {
 		return Workspaces{}, err
 	}
+
 	return workspaces, nil
 }
