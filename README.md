@@ -20,7 +20,7 @@ USAGE:
    toggl [global options] command [command options] [arguments...]
 
 VERSION:
-   0.3.0
+   0.3.1
 
 AUTHOR(S):
    sachaos <sakataku7@gmail.com>
