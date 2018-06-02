@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/sachaos/toggl/cache"
+	"github.com/sachaos/toggl/command"
 	"github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
@@ -28,6 +29,8 @@ func main() {
 
 	initialize()
 
+	cmdApp := command.NewApp(viper.GetString("token"))
+
 	app := cli.NewApp()
 	app.Name = Name
 	app.Version = Version
@@ -36,7 +39,48 @@ func main() {
 	app.Usage = "Toggl API CLI Client"
 
 	app.Flags = GlobalFlags
-	app.Commands = Commands
+	app.Commands = []cli.Command{
+		{
+			Name:   "start",
+			Usage:  "Start time entry",
+			Action: cmdApp.CmdStart,
+			Flags: []cli.Flag{
+				projectIDFlag,
+			},
+		},
+		{
+			Name:   "stop",
+			Usage:  "End time entry",
+			Action: cmdApp.CmdStop,
+			Flags:  []cli.Flag{},
+		},
+		{
+			Name:   "current",
+			Usage:  "Show current time entry",
+			Action: cmdApp.CmdCurrent,
+			Flags:  []cli.Flag{},
+		},
+		{
+			Name:   "workspaces",
+			Usage:  "Show workspaces",
+			Action: cmdApp.CmdWorkspaces,
+		},
+		{
+			Name:   "projects",
+			Usage:  "Show projects on current workspaces",
+			Action: cmdApp.CmdProjects,
+		},
+		{
+			Name:   "local",
+			Usage:  "Set current dir workspace",
+			Action: CmdLocal,
+		},
+		{
+			Name:   "global",
+			Usage:  "Set global workspace",
+			Action: CmdGlobal,
+		},
+	}
 	app.CommandNotFound = CommandNotFound
 
 	app.Run(os.Args)
@@ -50,7 +94,8 @@ func requireToken() error {
 	for count < 3 {
 		fmt.Printf("Input API Token: ")
 		fmt.Scan(&token)
-		workspaces, err = toggl.FetchWorkspaces(token)
+		client := toggl.NewDefaultClient(token)
+		workspaces, err = client.FetchWorkspaces()
 		if err == nil {
 			viper.Set("token", token)
 			viper.Set("wid", workspaces[0].ID)

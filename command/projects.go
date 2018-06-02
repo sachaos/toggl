@@ -9,18 +9,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-func GetProjects(c *cli.Context) (projects toggl.Projects, err error) {
+func (app *App) getProjects(c *cli.Context) (projects toggl.Projects, err error) {
 	projects = cache.GetContent().Projects
 	if len(projects) == 0 || !c.GlobalBool("cache") {
-		projects, err = toggl.FetchWorkspaceProjects(viper.GetString("token"), viper.GetInt("wid"))
+		projects, err = app.client.FetchWorkspaceProjects(viper.GetInt("wid"))
 		cache.SetProjects(projects)
 		cache.Write()
 	}
 	return
 }
 
-func CmdProjects(c *cli.Context) error {
-	projects, err := GetProjects(c)
+func (app *App) CmdProjects(c *cli.Context) error {
+	projects, err := app.getProjects(c)
 	if err != nil {
 		return err
 	}

@@ -9,18 +9,18 @@ import (
 	"github.com/urfave/cli"
 )
 
-func GetWorkspaces(c *cli.Context) (workspaces toggl.Workspaces, err error) {
+func (app *App) getWorkspaces(c *cli.Context) (workspaces toggl.Workspaces, err error) {
 	workspaces = cache.GetContent().Workspaces
 	if len(workspaces) == 0 || !c.GlobalBool("cache") {
-		workspaces, err = toggl.FetchWorkspaces(viper.GetString("token"))
+		workspaces, err = app.client.FetchWorkspaces()
 		cache.SetWorkspaces(workspaces)
 		cache.Write()
 	}
 	return
 }
 
-func CmdWorkspaces(c *cli.Context) error {
-	workspaces, err := GetWorkspaces(c)
+func (app *App) CmdWorkspaces(c *cli.Context) error {
+	workspaces, err := app.getWorkspaces(c)
 	if err != nil {
 		return err
 	}

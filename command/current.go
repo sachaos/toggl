@@ -7,7 +7,6 @@ import (
 
 	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
@@ -23,7 +22,7 @@ func calcDuration(duration int64) time.Duration {
 	return time.Duration(second * int64(time.Second))
 }
 
-func CmdCurrent(c *cli.Context) error {
+func (app *App) CmdCurrent(c *cli.Context) error {
 	var project toggl.Project
 	var timeEntry toggl.TimeEntry
 	var workspace toggl.Workspace
@@ -31,7 +30,7 @@ func CmdCurrent(c *cli.Context) error {
 	timeEntry = cache.GetContent().CurrentTimeEntry
 
 	if !c.GlobalBool("cache") {
-		current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
+		current, err := app.client.GetCurrentTimeEntry()
 		timeEntry = current.Data
 		if err != nil {
 			return err
@@ -39,14 +38,14 @@ func CmdCurrent(c *cli.Context) error {
 		cache.SetCurrentTimeEntry(timeEntry)
 		cache.Write()
 
-		workspaces, err := GetWorkspaces(c)
+		workspaces, err := app.getWorkspaces(c)
 		if err != nil {
 			return err
 		}
 		workspace, err = workspaces.FindByID(timeEntry.WID)
 
 		if timeEntry.PID != 0 {
-			projects, err := GetProjects(c)
+			projects, err := app.getProjects(c)
 			if err != nil {
 				return err
 			}

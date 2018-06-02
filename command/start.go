@@ -9,7 +9,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func CmdStart(c *cli.Context) error {
+func (app *App) CmdStart(c *cli.Context) error {
 	timeEntry := toggl.TimeEntry{}
 	if !c.Args().Present() {
 		return errors.New("Command Failed")
@@ -20,7 +20,7 @@ func CmdStart(c *cli.Context) error {
 	if c.IsSet("project-id") {
 		timeEntry.PID = c.Int("project-id")
 	}
-	response, err := toggl.PostStartTimeEntry(timeEntry, viper.GetString("token"))
+	response, err := app.client.PostStartTimeEntry(timeEntry)
 
 	if err != nil {
 		return err

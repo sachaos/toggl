@@ -3,15 +3,14 @@ package command
 import (
 	"github.com/sachaos/toggl/cache"
 	"github.com/sachaos/toggl/lib"
-	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
 
-func CmdStop(c *cli.Context) error {
-	current, err := toggl.GetCurrentTimeEntry(viper.GetString("token"))
+func (app *App) CmdStop(c *cli.Context) error {
+	current, err := app.client.GetCurrentTimeEntry()
 	current_time_entry := current.Data
 
-	err = toggl.PutStopTimeEntry(current_time_entry.ID, viper.GetString("token"))
+	err = app.client.PutStopTimeEntry(current_time_entry.ID)
 
 	if err != nil {
 		return err
