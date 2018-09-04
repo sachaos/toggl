@@ -19,7 +19,10 @@ func (app *App) CmdStart(c *cli.Context) error {
 	timeEntry.WID = viper.GetInt("wid")
 	if c.IsSet("project-id") {
 		timeEntry.PID = c.Int("project-id")
+	} else if viper.GetInt("pid") != 0 {
+		timeEntry.PID = viper.GetInt("pid")
 	}
+
 	response, err := app.client.PostStartTimeEntry(timeEntry)
 	if err != nil {
 		return err
