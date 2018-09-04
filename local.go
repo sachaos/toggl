@@ -16,7 +16,13 @@ func CmdLocal(c *cli.Context) error {
 		return err
 	}
 
-	CreateConfig(LocalConfigFilePath(), map[string]int{"wid": wid})
+	var pid int
+
+	if c.IsSet("project-id") {
+		pid = c.Int("project-id")
+	}
+
+	CreateConfig(LocalConfigFilePath(), map[string]int{"wid": wid, "pid": pid})
 
 	return nil
 }

@@ -75,6 +75,9 @@ func main() {
 			Name:   "local",
 			Usage:  "Set current dir workspace",
 			Action: CmdLocal,
+			Flags: []cli.Flag{
+				projectIDFlag,
+			},
 		},
 		{
 			Name:   "global",
