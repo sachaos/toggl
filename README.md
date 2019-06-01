@@ -46,7 +46,7 @@ GLOBAL OPTIONS:
 To install, use `go get`:
 
 ```bash
-$ go get -d github.com/sachaos/toggl
+$ go get github.com/sachaos/toggl
 ```
 
 ### Register API token
