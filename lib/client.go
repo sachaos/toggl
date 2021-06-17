@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	baseURI    = "https://www.toggl.com/api/v8"
+	baseURI    = "https://api.track.toggl.com/api/v8"
 	retryCount = 3
 )
 
