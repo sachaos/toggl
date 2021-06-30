@@ -49,6 +49,12 @@ To install, use `go get`:
 $ go get github.com/sachaos/toggl
 ```
 
+### Homebrew
+
+```shell
+$ brew install sachaos/tap/toggl
+```
+
 ### Register API token
 
 When you run `toggl` first time, you will be asked your toggl API token.
