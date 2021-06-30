@@ -24,6 +24,11 @@ const (
 	ConfigType = "json"
 )
 
+
+const Name string = "toggl"
+
+var version string
+
 func main() {
 	cache.New(os.Getenv("HOME") + "/.toggl.cache.json")
 	cache.Init()
@@ -34,7 +39,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = Name
-	app.Version = Version
+	app.Version = version
 	app.Author = "sachaos"
 	app.Email = "sakataku7@gmail.com"
 	app.Usage = "Toggl API CLI Client"
