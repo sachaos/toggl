@@ -2,15 +2,14 @@ package command
 
 import (
 	"github.com/sachaos/toggl/cache"
-	"github.com/sachaos/toggl/lib"
+	toggl "github.com/sachaos/toggl/lib"
 	"github.com/urfave/cli"
 )
 
 func (app *App) CmdStop(c *cli.Context) error {
-	current, err := app.client.GetCurrentTimeEntry()
-	current_time_entry := current.Data
+	currentTimeEntry, err := app.client.GetCurrentTimeEntry()
 
-	err = app.client.PutStopTimeEntry(current_time_entry.ID)
+	err = app.client.PutStopTimeEntry(currentTimeEntry.WorkspaceID, currentTimeEntry.ID)
 
 	if err != nil {
 		return err

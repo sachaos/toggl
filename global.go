@@ -12,11 +12,11 @@ func CmdGlobal(c *cli.Context) error {
 	if !c.Args().Present() {
 		return errors.New("Command Failed")
 	}
-	wid, err := strconv.Atoi(c.Args().First())
+	workspaceID, err := strconv.Atoi(c.Args().First())
 	if err != nil {
 		return err
 	}
-	viper.Set("wid", wid)
+	viper.Set("wid", workspaceID)
 
 	CreateConfig(RootConfigFilePath(), viper.AllSettings())
 

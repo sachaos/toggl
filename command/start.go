@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/sachaos/toggl/cache"
-	"github.com/sachaos/toggl/lib"
+	toggl "github.com/sachaos/toggl/lib"
 	"github.com/spf13/viper"
 	"github.com/urfave/cli"
 )
@@ -16,19 +16,19 @@ func (app *App) CmdStart(c *cli.Context) error {
 	}
 
 	timeEntry.Description = c.Args().First()
-	timeEntry.WID = viper.GetInt("wid")
+	timeEntry.WorkspaceID = viper.GetInt("wid")
 	if c.IsSet("project-id") {
-		timeEntry.PID = c.Int("project-id")
+		timeEntry.ProjectID = c.Int("project-id")
 	} else if viper.GetInt("pid") != 0 {
-		timeEntry.PID = viper.GetInt("pid")
+		timeEntry.ProjectID = viper.GetInt("pid")
 	}
 
-	response, err := app.client.PostStartTimeEntry(timeEntry)
+	newTimeEntry, err := app.client.PostStartTimeEntry(timeEntry)
 	if err != nil {
 		return err
 	}
 
-	cache.SetCurrentTimeEntry(response.Data)
+	cache.SetCurrentTimeEntry(newTimeEntry)
 	cache.Write()
 
 	return nil
