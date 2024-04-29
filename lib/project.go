@@ -3,7 +3,7 @@ package toggl
 import (
 	"encoding/json"
 	"errors"
-	"strconv"
+	"fmt"
 )
 
 type Project struct {
@@ -19,7 +19,7 @@ type Project struct {
 	IsPrivate     bool   `json:"is_private"`
 	Name          string `json:"name"`
 	Template      bool   `json:"template"`
-	Wid           int    `json:"wid"`
+	WorkspaceID   int    `json:"workspace_id"`
 }
 
 type Projects []Project
@@ -33,10 +33,14 @@ func (repository Projects) FindByID(id int) (Project, error) {
 	return Project{}, errors.New("Find Failed")
 }
 
-func (cl *Client) FetchWorkspaceProjects(wid int) (Projects, error) {
+func (cl *Client) FetchWorkspaceProjects(workspaceID int) (Projects, error) {
 	var projects Projects
 
-	res, err := cl.do("GET", "/workspaces/"+strconv.Itoa(wid)+"/projects", nil)
+	res, err := cl.do(
+		"GET",
+		fmt.Sprintf("/workspaces/%d/projects", workspaceID),
+		nil,
+	)
 	if err != nil {
 		return Projects{}, err
 	}

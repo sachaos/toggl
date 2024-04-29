@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/sachaos/toggl/cache"
-	"github.com/sachaos/toggl/lib"
+	toggl "github.com/sachaos/toggl/lib"
 	"github.com/urfave/cli"
 )
 
@@ -26,12 +26,12 @@ func (app *App) CmdCurrent(c *cli.Context) error {
 	var project toggl.Project
 	var timeEntry toggl.TimeEntry
 	var workspace toggl.Workspace
+	var err error
 
 	timeEntry = cache.GetContent().CurrentTimeEntry
 
 	if !c.GlobalBool("cache") {
-		current, err := app.client.GetCurrentTimeEntry()
-		timeEntry = current.Data
+		timeEntry, err = app.client.GetCurrentTimeEntry()
 		if err != nil {
 			return err
 		}
@@ -42,14 +42,14 @@ func (app *App) CmdCurrent(c *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		workspace, err = workspaces.FindByID(timeEntry.WID)
+		workspace, err = workspaces.FindByID(timeEntry.WorkspaceID)
 
-		if timeEntry.PID != 0 {
+		if timeEntry.ProjectID != 0 {
 			projects, err := app.getProjects(c)
 			if err != nil {
 				return err
 			}
-			project, err = projects.FindByID(timeEntry.PID)
+			project, err = projects.FindByID(timeEntry.ProjectID)
 			if err != nil {
 				return err
 			}
