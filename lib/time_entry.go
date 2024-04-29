@@ -73,7 +73,7 @@ func (cl *Client) PostStartTimeEntry(
 
 func (cl *Client) PutStopTimeEntry(workspaceID int, timeEntryID int) error {
 	_, err := cl.do(
-		"PUT",
+		"PATCH",
 		fmt.Sprintf(
 			"/workspaces/%d/time_entries/%d/stop",
 			workspaceID,
