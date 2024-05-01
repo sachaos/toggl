@@ -32,10 +32,10 @@ changelog:
     - '^docs:'
     - '^test:'
 brews:
-- tap:
+- repository:
     owner: sachaos
     name: homebrew-tap
-  folder: Formula
+  directory: Formula
   homepage: https://github.com/sachaos/toggl
   description: Toggl CLI client
   skip_upload: auto
